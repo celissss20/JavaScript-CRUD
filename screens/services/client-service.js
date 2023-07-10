@@ -1,7 +1,10 @@
-const crearNuevaLinea= ()=>{
-  const contenido = `<tr>
-    <td class="td" data-td>Gabriela</td>
-    <td>gabriela@alura.com</td>
+const crearNuevaLinea = (nombre, email) => {
+  const linea = document.createElement("tr");
+  const contenido = `
+    <td class="td" data-td>
+    ${nombre}
+    </td>
+    <td>${email}</td>
     <td>
       <ul class="table__button-control">
         <li>
@@ -20,11 +23,12 @@ const crearNuevaLinea= ()=>{
           </button>
         </li>
       </ul>
-    </td>
-  </tr>
-}`
+    </td>`;
+  linea.innerHTML = contenido;
+  return linea;
+}
 
-const http = new XMLHttpRequest;
+const table = document.querySelector("[data-table]");
 
 //Abrir http (método,url)
 
@@ -34,11 +38,31 @@ const http = new XMLHttpRequest;
 //Update  - PUT/PATCH
 //Delete  - DELETE
 
-http.open("GET"," http://localhost:3000/perfil");
+const listarClientes = () => {
+  const promise = new Promise((resolve, reject) => {
+    const http = new XMLHttpRequest;
+    http.open("GET", " http://localhost:3000/perfil");
 
-http.send();
+    http.send();
 
-http.onload = () => {
-const data =http.response
-console.log(data);
-}
+    http.onload = () => {
+      const response = JSON.parse(http.response);
+      if (http.status >= 400) {
+        reject(response);
+      } else {
+        resolve(response);
+      }
+    }
+
+  });
+  return promise;
+};
+
+listarClientes().then((data) => {
+  data.forEach((perfil) => {
+    const nuevaLinea = crearNuevaLinea(perfil.nombre, perfil.email);
+    table.appendChild(nuevaLinea);
+  });
+}).catch((error) => alert("Ocurrio un error"));
+
+
