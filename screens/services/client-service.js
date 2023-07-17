@@ -35,7 +35,7 @@ const actualizarCliente = (nombre,email,id) => {
     method:"PUT",
     headers:{
        "Content-Type": "application/json"
-    },
+    }, 
     body:JSON.stringify({nombre,email}) 
   })
   .then((respuesta) => respuesta)
